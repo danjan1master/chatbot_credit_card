@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Card Recommender</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f0f2f5; }
+    #chatbox { border: 1px solid #ccc; padding: 10px; width: 500px; height: 400px; overflow-y: auto; background: white; }
+    #userInput { width: 80%; padding: 10px; margin-top: 10px; }
+    .bot { color: navy; margin: 10px 0; }
+    .user { text-align: right; color: green; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+<h2>💳 AI Credit Card Assistant</h2>
+<div id="chatbox"></div>
+<input type="text" id="userInput" placeholder="Type your message..." />
+<button onclick="sendMessage()">Send</button>
+
+<script>
+  const chatbox = document.getElementById("chatbox");
+  const userInput = document.getElementById("userInput");
+
+  let step = 0;
+  let userData = {};
+
+  function botMessage(text) {
+    const p = document.createElement("p");
+    p.className = "bot";
+    p.textContent = "🤖 " + text;
+    chatbox.appendChild(p);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+
+  function userMessage(text) {
+    const p = document.createElement("p");
+    p.className = "user";
+    p.textContent = text;
+    chatbox.appendChild(p);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+
+  function sendMessage() {
+    const input = userInput.value.trim();
+    if (!input) return;
+
+    userMessage(input);
+    userInput.value = "";
+
+    if (step === 0) {
+      userData.name = input;
+      botMessage(`Hi ${userData.name}, please enter your email address.`);
+      step++;
+    } else if (step === 1) {
+      userData.email = input;
+      botMessage("Great! What's your age?");
+      step++;
+    } else if (step === 2) {
+      userData.age = input;
+      botMessage("Thanks! What's your monthly income?");
+      step++;
+    } else if (step === 3) {
+      userData.income = input;
+      botMessage("What type of card are you looking for? (e.g., Travel, Cashback, Rewards)");
+      step++;
+    } else if (step === 4) {
+      userData.preference = input;
+      botMessage("🔍 Recommending the best card for you...");
+
+      setTimeout(() => {
+        const result = `Based on your inputs, we recommend the **Platinum ${userData.preference} Card**.`;
+
+        botMessage(result);
+
+        console.log("Send to CRM & Email:");
+        console.log(JSON.stringify(userData, null, 2));
+
+        botMessage("Would you like this recommendation sent to your email?");
+        step++;
+      }, 1500);
+    } else if (step === 5) {
+      if (input.toLowerCase().includes("yes")) {
+        botMessage(`📧 Email sent to ${userData.email} with your card recommendation.`);
+      } else {
+        botMessage("Okay! Let us know if you'd like to explore more options.");
+      }
+      step++;
+    }
+  }
+
+  botMessage("Welcome to our Credit Card Assistant. What's your name?");
+</script>
+
+</body>
+</html>
